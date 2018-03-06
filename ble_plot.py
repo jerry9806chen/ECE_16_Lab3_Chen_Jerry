@@ -20,10 +20,9 @@ SERIAL_RATE = 115200
 ser = serial.Serial(SERIAL_PORT, SERIAL_RATE, timeout=1)
 
 # define the figure and its subplots
-fig = plt.figure()
-sub1 = fig.add_subplot(2,2,1)
-sub2 = fig.add_subplot(2,2,2)
-sub3 = fig.add_subplot(2,2,3)
+fig1 = plt.figure(1)
+fig2 = plt.figure(2)
+fig3 = plt.figure(3)
 
 # arrays for EMG, accelerometer, gyroscope, and sampling times
 EMG1 = []
@@ -36,13 +35,11 @@ gy = []
 gz = []
 time = []
 
-#plot x_value and signal onto a subplot
-def plot_signal(sub, x_value, signal, title, x_label = 'time (milliseconds)', y_label = 'Scaled Data (mV)'):
-    sub.clear()
-    sub.plot(x_value, signal)
-    #ax.title(title)
-    #ax.xlabel(x_label)
-    #ax.ylabel(y_label)
+#Label title and axes of figure
+def label_plot(fig, title, x_label, y_label):
+    fig.title(title)
+    fig.xlabel(x_label)
+    fig.ylabel(y_label)
 
 #plotting function. Gather data from each line and update the subplots only when the arrays have the same number of entries(time is being update).
 def plotting(i):
@@ -61,20 +58,25 @@ def plotting(i):
         gz += [float(reading[reading.find("gz=") + 3:reading.find("\n")])]
     elif "time" in reading:
         time += [int(reading[reading.find("start: ") + 7:reading.find(" ms")])]
-        sub1.clear()
-        sub1.axis([time[len(time)] - 5000, time[len(time)], -0.8, 0.8])
-        sub1.plot(time, EMG1)
-        sub1.plot(time, EMG2)
-        sub2.clear()
-        sub2.axis([time[len(time)] - 5000, time[len(time)], -5, 5])
-        sub2.plot(time, ax)
-        sub2.plot(time, ay)
-        sub2.plot(time, az)
-        sub3.clear()
-        sub3.axis([time[len(time)] - 5000, time[len(time)], -250, 250])
-        sub3.plot(time, gx)
-        sub3.plot(time, gy)
-        sub3.plot(time, gz)
+        fig1.clear()
+        fig1.axis([time[len(time)] - 5000, time[len(time)], -0.8, 0.8])
+        fig1.plot(time, EMG1)
+        fig1.plot(time, EMG2)
+        label_plot(fig1, "EMG Scaled Data", 'time (milliseconds)', "Scaled Data (mV)")
         
-ani = animation.FuncAnimation(fig, plotting, interval=1000)
+        fig2.clear()
+        fig2.axis([time[len(time)] - 5000, time[len(time)], -5, 5])
+        fig2.plot(time, ax)
+        fig2.plot(time, ay)
+        fig2.plot(time, az)
+        label_plot(fig1, "Accelerometer Data", 'time (milliseconds)', "acceleration (m/s^2)")
+
+        fig3.clear()
+        fig3.axis([time[len(time)] - 5000, time[len(time)], -250, 250])
+        fig3.plot(time, gx)
+        fig3.plot(time, gy)
+        fig3.plot(time, gz)
+        label_plot(fig1, "Gyroscope Data", 'time (milliseconds)', "ang. accel. (deg/s^2)")
+        
+ani = animation.FuncAnimation(plt, plotting, interval=1000)
 plt.show()
