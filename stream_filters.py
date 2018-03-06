@@ -18,8 +18,6 @@ import scipy.signal as signal
 SERIAL_PORT = '/dev/cu.usbmodem1421'
 #the same rate used on the Arduino
 SERIAL_RATE = 115200
-#the number of times a set of samples has been printed
-printCount = 0
 
 #the figure and subplots for original, hilo pass, rectified, and smooth signals and power spectral density.
 fig = plt.figure()
@@ -50,6 +48,7 @@ def my_filter(b, a, orig_signal):
 def plot_signal(ax, x_value, y_value, title, x_label = 'time (milliseconds)', y_label = 'Scaled Data (mV)'):
     ax.clear()
     ax.plot(x_value, y_value)
+    ax.axis([time[len(time)] - 5000, time[len(time)], -0.8, 0.8])
     #ax.title(title)
     #ax.xlabel(x_label)
     #ax.ylabel(y_label)
